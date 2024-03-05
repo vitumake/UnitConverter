@@ -1,7 +1,8 @@
 pipeline {
     agent any
     environment {
-        //DOCKERHUB_CREDENTIALS = credentials('vitumake')
+
+        DOCKERHUB_CREDENTIALS = credentials('vitumake')
         DOCKERHUB_REPO = 'vitumake/unitconverter'
         DOCKER_IMAGE_TAG = 'latest'
     }
@@ -38,11 +39,12 @@ pipeline {
             steps {
                 script {
                     // Build the Docker image
-                    bat "docker build -t ${DOCKERHUB_REPO}:${DOCKER_IMAGE_TAG} ."
+                    docker.build("${DOCKERHUB_REPO}:${DOCKER_IMAGE_TAG}")
 
                     // Push the Docker image to Docker Hub
-                    bat "docker login"
-                    bat "docker push ${DOCKERHUB_REPO}:${DOCKER_IMAGE_TAG}"
+                    docker.withRegistry('https://index.docker.io/v1/', 'DOCKERHUB_CREDENTIALS') {
+                        docker.image("${DOCKERHUB_REPO}:${DOCKER_IMAGE_TAG}").push()
+                    }
                 }
             }
         }
