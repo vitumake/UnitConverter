@@ -2,7 +2,7 @@ pipeline {
     agent any
     environment {
 
-        DOCKERHUB_CREDENTIALS = credentials('vitumake')
+        DOCKERHUB_CREDENTIALS = 'dockerhub_id'
         DOCKERHUB_REPO = 'vitumake/unitconverter'
         DOCKER_IMAGE_TAG = 'latest'
     }
