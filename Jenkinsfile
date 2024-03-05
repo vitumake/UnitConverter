@@ -38,12 +38,11 @@ pipeline {
             steps {
                 script {
                     // Build the Docker image
-                    docker.build("${DOCKERHUB_REPO}:${DOCKER_IMAGE_TAG}")
+                    bat "docker build -t ${DOCKERHUB_REPO}:${DOCKER_IMAGE_TAG} ."
 
                     // Push the Docker image to Docker Hub
-                    docker.withRegistry('https://index.docker.io/v1/', 'DOCKERHUB_CREDENTIALS') {
-                        docker.image("${DOCKERHUB_REPO}:${DOCKER_IMAGE_TAG}").push()
-                    }
+                    bat "docker login"
+                    bat "docker push ${DOCKERHUB_REPO}:${DOCKER_IMAGE_TAG}"
                 }
             }
         }
