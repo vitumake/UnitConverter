@@ -2,6 +2,10 @@ pipeline {
     agent any
     environment {
         PATH = "${env.PATH};C:\\Windows\\System32" // Update the PATH to include the directory of cmd.exe
+
+        DOCKERHUB_CREDENTIALS = credentials('vitumake')
+        DOCKERHUB_REPO = 'vitumake/unitconverter'
+        DOCKER_IMAGE_TAG = 'latest'
     }
 
     stages {
@@ -11,11 +15,20 @@ pipeline {
             }
         }
         
-        stage('Build') {
+        stage('Build and push Docker image') {
             steps {
-                bat 'mvn -f ./projteht clean install'
+                script {
+                    // Build the Docker image
+                    docker.build("vitumake/unitconverter:latest", "./projteht")
+
+                    // Push the Docker image to Docker Hub
+                    docker withRegistry('https://index.docker.io/v1/', 'DOCKERHUB_CREDENTIALS') {
+                        docker.image("${DOCKERHUB_REPO}:${DOCKER_IMAGE_TAG}").push()
+                    }
+                }
             }
         }
+
         stage('Test') {
             steps{
                 bat 'mvn -f ./projteht test'
