@@ -1,8 +1,6 @@
 pipeline {
     agent any
     environment {
-        PATH = "${env.PATH};C:\\Windows\\System32" // Update the PATH to include the directory of cmd.exe
-
         DOCKERHUB_CREDENTIALS = credentials('vitumake')
         DOCKERHUB_REPO = 'vitumake/unitconverter'
         DOCKER_IMAGE_TAG = 'latest'
@@ -40,7 +38,7 @@ pipeline {
             steps {
                 script {
                     // Build the Docker image
-                    docker.build("vitumake/unitconverter:latest", "./projteht")
+                    docker.build("${DOCKERHUB_REPO}:${DOCKER_IMAGE_TAG}")
 
                     // Push the Docker image to Docker Hub
                     docker.withRegistry('https://index.docker.io/v1/', 'DOCKERHUB_CREDENTIALS') {
